@@ -34,10 +34,30 @@ ticketRoutes.get("/get-ticket/:id", async (req, res) => {
   }
 });
 
+ticketRoutes.post("/add-ticket", async (req, res) => {
+  try {
+    const ticket = await Ticket.create(req.body);
+
+    res.status(201).json({
+      success: true,
+      message: "Ticket created successfully",
+      data: ticket,
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to create ticket",
+      error: err.message,
+    });
+  }
+});
+
 ticketRoutes.delete("/delete-ticket/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    const ticket = await Ticket.findByIdAndDelete({ id });
+    const ticket = await Ticket.findOneAndDelete({ id });
     if (!ticket) {
       return res.status(404).json({ error: "Ticket not found" });
     }
