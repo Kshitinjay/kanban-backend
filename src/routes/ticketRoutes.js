@@ -54,6 +54,38 @@ ticketRoutes.post("/add-ticket", async (req, res) => {
   }
 });
 
+ticketRoutes.put("/update-ticket/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const updatedTicket = await Ticket.findOneAndUpdate({ id }, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedTicket) {
+      return res.status(404).json({
+        success: false,
+        message: "Ticket not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Ticket updated successfully",
+      data: updatedTicket,
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to update ticket",
+      error: err.message,
+    });
+  }
+});
+
 ticketRoutes.delete("/delete-ticket/:id", async (req, res) => {
   try {
     const id = req.params.id;
