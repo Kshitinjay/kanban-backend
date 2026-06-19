@@ -1,17 +1,22 @@
+require("dotenv").config();
 const express = require("express");
+
 const dbConnection = require("./src/config/dbConnection");
-const app = express();
 const ticketRoutes = require("./src/routes/ticketRoutes");
 const userRoute = require("./src/routes/userRoutes");
+const authRoute = require("./src/routes/authRoutes");
+const auth = require("./src/middleware/auth");
 
+const app = express();
 app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("kanban backend server setup");
 });
 
-app.use("/tickets", ticketRoutes);
-app.use("/users", userRoute);
+app.use("/", authRoute);
+app.use("/users", auth, userRoute);
+app.use("/tickets", auth, ticketRoutes);
 
 app.listen(3000, () => {
   console.log("Server started");
