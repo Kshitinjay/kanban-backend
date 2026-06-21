@@ -106,4 +106,22 @@ userRoute.put("/reset-password/:id", async (req, res) => {
   }
 });
 
+userRoute.delete("/delete-user/:id", async (req, res) => {
+  try {
+    const user = await User.findOneAndDelete({ id: req.params.id });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    const users = await User.find();
+    res.status(200).json({
+      success: true,
+      message: "User deleted successfully",
+      data: users,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to delete user" });
+  }
+});
+
 module.exports = userRoute;
