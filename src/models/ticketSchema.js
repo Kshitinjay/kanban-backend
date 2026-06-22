@@ -1,6 +1,42 @@
 const mongoose = require("mongoose");
 const crypto = require("crypto");
 
+const commentSchema = new mongoose.Schema(
+  {
+    id: {
+      type: String,
+      default: () => crypto.randomUUID(),
+    },
+    text: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    userId: {
+      type: String,
+      required: true,
+    },
+    author: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  {
+    toJSON: {
+      transform: (_doc, ret) => {
+        delete ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+  },
+);
+
 const ticketSchema = new mongoose.Schema(
   {
     id: {
@@ -39,6 +75,10 @@ const ticketSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+    },
+    comments: {
+      type: [commentSchema],
+      default: [],
     },
   },
   {

@@ -103,4 +103,43 @@ ticketRoutes.delete("/delete-ticket/:id", async (req, res) => {
   }
 });
 
+ticketRoutes.put("/add-comment/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { text } = req.body;
+
+    if (!text || !text.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Comment text is required",
+      });
+    }
+
+    const ticket = await Ticket.findOne({ id });
+    if (!ticket) {
+      return res.status(404).json({
+        success: false,
+        message: "Ticket not found",
+      });
+    }
+
+    ticket.comments.push({
+      text,
+      userId: req.user.id,
+      author: req.user.name,
+    });
+    await ticket.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Comment added successfully",
+      data: ticket.comments,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to add comment" });
+  }
+});
+
+
 module.exports = ticketRoutes;
