@@ -58,10 +58,19 @@ ticketRoutes.put("/update-ticket/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const updatedTicket = await Ticket.findOneAndUpdate({ id }, req.body, {
+    const { newComment, ...fields } = req.body;
+    const updatedTicket = await Ticket.findOneAndUpdate({ id }, fields, {
       new: true,
       runValidators: true,
     });
+    if (newComment) {
+      updatedTicket.comments.push({
+        text: newComment,
+        userId: req.user.id,
+        author: req.user.name,
+      });
+      await updatedTicket.save();
+    }
 
     if (!updatedTicket) {
       return res.status(404).json({
