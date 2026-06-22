@@ -63,6 +63,14 @@ ticketRoutes.put("/update-ticket/:id", async (req, res) => {
       new: true,
       runValidators: true,
     });
+
+    if (!updatedTicket) {
+      return res.status(404).json({
+        success: false,
+        message: "Ticket not found",
+      });
+    }
+
     if (newComment) {
       updatedTicket.comments.push({
         text: newComment,
@@ -70,13 +78,6 @@ ticketRoutes.put("/update-ticket/:id", async (req, res) => {
         author: req.user.name,
       });
       await updatedTicket.save();
-    }
-
-    if (!updatedTicket) {
-      return res.status(404).json({
-        success: false,
-        message: "Ticket not found",
-      });
     }
 
     res.status(200).json({
