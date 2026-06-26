@@ -39,6 +39,16 @@ userRoute.put("/update-user/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
+    const isOwnProfile = req.user.id === id;
+    const isAdmin = req.user.role === "admin";
+
+    if (!isOwnProfile && !isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: "You can only update your own profile",
+      });
+    }
+
     const updatedUser = await User.findOneAndUpdate({ id }, req.body, {
       new: true,
       runValidators: true,
