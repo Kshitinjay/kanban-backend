@@ -33,4 +33,20 @@ authRoute.post("/login", async (req, res) => {
   }
 });
 
+// Public self-signup. Role is always "member" — never trust the body.
+authRoute.post("/register", async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    const user = await User.create({ name, email, password, role: "member" });
+    res.status(201).json({
+      success: true,
+      message: "User registered successfully",
+      data: user,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to register user" });
+  }
+});
+
 module.exports = authRoute;

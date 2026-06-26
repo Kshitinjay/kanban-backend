@@ -17,20 +17,6 @@ userRoute.get("/", async (req, res) => {
   }
 });
 
-userRoute.post("/add-user", async (req, res) => {
-  try {
-    const user = await User.create(req.body);
-    res.status(201).json({
-      success: true,
-      message: "User created successfully",
-      data: user,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to load users" });
-  }
-});
-
 userRoute.get("/get-user/:id", async (req, res) => {
   try {
     const user = await User.findOne({ id: req.params.id });

@@ -71,10 +71,18 @@ const ticketSchema = new mongoose.Schema(
       default: "",
       trim: true,
     },
+    assigneeId: {
+      type: String,
+      default: "",
+    },
     reporter: {
       type: String,
       required: true,
       trim: true,
+    },
+    reporterId: {
+      type: String,
+      default: "",
     },
     comments: {
       type: [commentSchema],
