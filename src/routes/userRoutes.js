@@ -1,6 +1,5 @@
 const express = require("express");
 const User = require("../models/userScheme");
-const requireRole = require("../middleware/requireRole");
 
 const userRoute = express.Router();
 
@@ -49,6 +48,8 @@ userRoute.put("/update-user/:id", async (req, res) => {
       });
     }
 
+    //khi se koi user ka role nhi update krde isliye ye lagay hai.
+    delete req.body.role;
     const updatedUser = await User.findOneAndUpdate({ id }, req.body, {
       new: true,
       runValidators: true,
@@ -74,6 +75,16 @@ userRoute.put("/reset-password/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { password } = req.body;
+
+    const isOwnProfile = req.user.id === id;
+    const isAdmin = req.user.role === "admin";
+
+    if (!isOwnProfile && !isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: "You can only reset your own password",
+      });
+    }
 
     if (!password || password.length < 6) {
       return res.status(400).json({
@@ -103,8 +114,18 @@ userRoute.put("/reset-password/:id", async (req, res) => {
   }
 });
 
-userRoute.delete("/delete-user/:id", requireRole("admin"),async (req, res) => {
+userRoute.delete("/delete-user/:id", async (req, res) => {
   try {
+
+    const isAdmin = req.user.role === "admin";
+
+    if (!isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: "You cannot delete any user, only admin can.",
+      });
+    }
+
     const user = await User.findOneAndDelete({ id: req.params.id });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
