@@ -24,7 +24,7 @@ authRoute.post("/login", async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Logged in successfully",
-      data: { id: user.id, name: user.name, email: user.email },
+      data: { id: user.id, name: user.name, email: user.email, role: user.role },
       token,
     });
   } catch (err) {
