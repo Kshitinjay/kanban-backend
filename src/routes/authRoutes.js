@@ -33,7 +33,6 @@ authRoute.post("/login", async (req, res) => {
   }
 });
 
-// Public self-signup. Role is always "member" — never trust the body.
 authRoute.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;

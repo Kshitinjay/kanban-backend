@@ -1,5 +1,6 @@
 const express = require("express");
 const User = require("../models/userScheme");
+const requireRole = require("../middleware/requireRole");
 
 const userRoute = express.Router();
 
@@ -92,7 +93,7 @@ userRoute.put("/reset-password/:id", async (req, res) => {
   }
 });
 
-userRoute.delete("/delete-user/:id", async (req, res) => {
+userRoute.delete("/delete-user/:id", requireRole("admin"),async (req, res) => {
   try {
     const user = await User.findOneAndDelete({ id: req.params.id });
     if (!user) {
