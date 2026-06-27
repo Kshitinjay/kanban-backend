@@ -22,6 +22,7 @@ app.use("/", authRoute);
 app.use("/users", auth, userRoute);
 app.use("/tickets", auth, ticketRoutes);
 
-app.listen(3000, () => {
-  console.log("Server started");
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`);
 });

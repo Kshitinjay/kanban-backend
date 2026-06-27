@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 
-const databaseURL = "mongodb://localhost:27017/kanban-backend";
+// Reads the connection string from the MONGODB_URI env variable (set on the
+// host / in .env). Falls back to local MongoDB for development.
+const databaseURL =
+  process.env.MONGODB_URI || "mongodb://localhost:27017/kanban-backend";
 
 mongoose
   .connect(databaseURL)
